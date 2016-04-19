@@ -6,18 +6,18 @@ I hereby claim:
 
   * I am an admin of http://smashthestack.org
   * I am l3thal (https://keybase.io/l3thal) on keybase.
-  * I have a public key with fingerprint 6B89 9EFF DCD9 2A60 A3F7  F3F5 1FC6 FCEE 9CE9 2A73
+  * I have a public key with fingerprint 5E04 F2F0 E0A1 E915 25DB  6052 BEDD DFF2 5540 86B5
 
 To do so, I am signing this object:
 
 {
     "body": {
         "key": {
-            "eldest_kid": "010146a60590c3c609241c3871da2c00ebaf4bf2cef48b15cefc9b9e506ef8d81a370a",
-            "fingerprint": "6b899effdcd92a60a3f7f3f51fc6fcee9ce92a73",
+            "eldest_kid": "0101581b8fbd14d456bfec231ef85af899fb300e513cb86bc877ff83886202f3776f0a",
+            "fingerprint": "5e04f2f0e0a1e91525db6052bedddff2554086b5",
             "host": "keybase.io",
-            "key_id": "1fc6fcee9ce92a73",
-            "kid": "010146a60590c3c609241c3871da2c00ebaf4bf2cef48b15cefc9b9e506ef8d81a370a",
+            "key_id": "bedddff2554086b5",
+            "kid": "0101581b8fbd14d456bfec231ef85af899fb300e513cb86bc877ff83886202f3776f0a",
             "uid": "231014955a1ea3634f0d928ce4e28319",
             "username": "l3thal"
         },
@@ -28,42 +28,36 @@ To do so, I am signing this object:
         "type": "web_service_binding",
         "version": 1
     },
-    "ctime": 1456035748,
+    "ctime": 1461079844,
     "expire_in": 157680000,
-    "prev": "ffa0b4c6516f61602b8da884fa0639b7b9713e07fe66f7415401b36614ebe491",
-    "seqno": 19,
+    "prev": "ab1d000752519b987c43d4b40c089fecffc8483b35638258f233e8769fe00cdf",
+    "seqno": 25,
     "tag": "signature"
 }
 
 which yields the signature:
 
 -----BEGIN PGP MESSAGE-----
-Version: Keybase OpenPGP v2.0.51
+Version: Keybase OpenPGP v2.0.53
 Comment: https://keybase.io/crypto
 
-yMNFAnicrVJtUFRVGF5koXaDsVqocHLMi6KzrMy9e79X0TJrTSggCqKM5d6757LX
-hd1l72WBIaMYISQTh6mkpJoBKRwxPgOxiVwTZxgol2iKQcpR1CBI+pZWYTuXsX/9
-7Px55zzv8zzned85Z6PDNfqwNeduXW+cMcphw/53izVZQ9lHyxHebS9DLOWIEywX
-UGAHsmJzSnbEgqAYihEUR6Ekiwq4QKGsmcAEnKExO2cWUBTwnEjwolkAIsHwGAmr
-wPIsIFEKiIydwTicRjnEhIiSKx94PV7JpUBbimdYFoiiXbCzZujO4SIt4iKJiQIl
-CgCwAoA4jUOhwy2rChiO52SQJLkhBi+25Xj/wf+fcxcv25lx1Y8lSQ4DHE7hhIjC
-4IwACGBmcIxViTLwurhCANkFuOLgCpC9JgRiPkkA6lrVOW735UJOdigOuGVOcCa5
-vflQ7vG6FbfgLoBth6J4LKpaKfOo9BLA224b2XjJZYebhAIf8MqS24VYMMgUFEl1
-xgiSQnGSJhgTAko9khfYJJVB0hSDwqM+A3zQUhQ5lCcEisQokcIo1Mwzdo5hCAhT
-OMvTPEtjOEBpEVCUSBMYSaAYj1MURgAeECyGqKMVudzQm4U5uXx1KinfxSnFXoDs
-PePfrdWE6TWRESvUL6bR6+7+9+P5jSuXEqvj9J8fymh7rMe/K7WrOu6dB0qrdqdo
-/MdO9euTs0PfbUkodI9veO/JpKmF5wI561YNNNwzEx+xSc6eW5i7tH30lnXq6rj2
-j0r+8I2Oi5H6L7q+1Q0lbAus0gxeOfhJTSpblDeanxH1SHhTYKOwbyB8+uSOl6TM
-06NLHb435EDrUuLZqx82GnpzrZfOfbTLaDyds6/mz9e6vyxM7+nVTeQafd5TOP3i
-s7OLT+nMnrZQvxTVlTa6pvE4FureErzssO6fWW0Va5q/Hgg//LFkcLY3J7eDA5vb
-uLCSHxMDq5sjcnakJX+a3lAxX808OOiRVr6VHixZP6407G8+QZkuZL66syqlZ+vc
-nvD7OrY9Pe1fN2Zl763vvLnJU9mqebtw2tkSmowmucXh2eimv1o61o6MJXSnZufG
-tRD1vce1U0eyLPHVSROWyovHXl7Q9B0ZvGlJqBp92KSt0F1+80LwhPxoXzrW2rUU
-XfLb6yNNv1R3Tlr9939/Z0pUeerjmus/Fxky21NsB+Ynwhprry1sjOtD79oTGdQm
-lOWNGD6IGTKffD570rn5leHJOubX8wN5B1vTkm+4glcqXghFdJrKEpHz73+zvrZO
-O9+z5AydMU38EF8bK7TXl888sXjHMz7fXHfsiq/6MywPrY2bWByZH9vwU2lV3dHA
-3PDstZisWN3QZ1t/N8QE/97e+g8n28no
-=xQkb
+yMIrAnicrVJbSBRRGN4tt1KwsiQqiWgIfDE5czkzZxYJgrSbVg/dS5c5M+fsTrvO
+7O6Mm7ZYEFkP1QZdwIy0iErDbmZQWZEVEfiQRWBUZEhQWhCUD5KknZF667Hzcjj/
+/33f+f6P/0nuZF+Of3qmP34tPQj9Pd1NNb7Nc9YtTnPYNuq4YJqLkomLxAziuKGo
+aXBBDvCAh4jHiGKDlwwJypgSXRB5QhHUKFJVikUACORFHSMZ60hRKEUiQrIABCoq
+ikyBxhVx1LTCJBlPmpbLZCEBEhUoIEDjicpDARpYBlDAxDAMSgUIJcDUICNGbMdj
+MHNYc0ixabMae4Qm7P0D/59910zIMSLgJRVCZlcTZVGiwFAFpBOJCEjkVQ/okKSl
+VROGjoluRItx9UUcq6VMnXixenP86TvVmhNxIyxlTY8W28kwo8eTtmvrdoy1I64b
+D3psty7uwXcRHPojFMKmZbAkGSFFko5pW1yQZ0jdNT1lXpJ5oKhIkoo4Uhs3kyRk
+egioyAiw431DUkxSw7zB3goLnlexihRdEg0JS0AHSGVBUaojCYlYhLKIBIioIIoE
+KTLrAaAblPNGS1g2FxQg86mFvanMsKW5NUnC1T96uCPL58/xTQlM8lbMl5M98+/i
+4bJpvsPXW5rTm+4tbZxiCkOX7lSV4q/z7xyrKO/u2GvdbGvdl+9/mZ8qOHGuIbM8
+72Q27Rvd3/6ibdZ4WQKceT/7VPnB9lfT3uBox/DKsuHx7kHxk3N367PtJSX40HDi
+4q/heQeaonb8bWJTz4PEg97cM631TYsbx+T7BT+PHHhdu3tPpdZ7fsmVhrFCl1tT
+XgkW9mSmrqm6vW3F6v61T7sCI4+zCtamD13IW7FR4n99u1z/vStrPXfazq+I/Oxd
+YG1pLT3Ykjt0wV94tG/RwPM9H99tCLT8aPgysMq/s9lqlDpHK8Y7V35+dbY0fLWt
+q7lh7qBx/MbIkY0fZqybuWzRrcd9mYDz7jfRc0OY
+=cLRF
 -----END PGP MESSAGE-----
 
 And finally, I am proving ownership of this host by posting or
@@ -72,3 +66,4 @@ appending to this document.
 View my publicly-auditable identity here: https://keybase.io/l3thal
 
 ==================================================================
+
