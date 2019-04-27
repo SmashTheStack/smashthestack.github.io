@@ -1,0 +1,69 @@
+==================================================================
+https://keybase.io/l3thal
+--------------------------------------------------------------------
+
+I hereby claim:
+
+  * I am an admin of http://smashthestack.org
+  * I am l3thal (https://keybase.io/l3thal) on keybase.
+  * I have a public key with fingerprint 5E04 F2F0 E0A1 E915 25DB  6052 BEDD DFF2 5540 86B5
+
+To do so, I am signing this object:
+
+{
+    "body": {
+        "key": {
+            "eldest_kid": "0101581b8fbd14d456bfec231ef85af899fb300e513cb86bc877ff83886202f3776f0a",
+            "fingerprint": "5e04f2f0e0a1e91525db6052bedddff2554086b5",
+            "host": "keybase.io",
+            "key_id": "bedddff2554086b5",
+            "kid": "0101581b8fbd14d456bfec231ef85af899fb300e513cb86bc877ff83886202f3776f0a",
+            "uid": "231014955a1ea3634f0d928ce4e28319",
+            "username": "l3thal"
+        },
+        "service": {
+            "hostname": "smashthestack.org",
+            "protocol": "http:"
+        },
+        "type": "web_service_binding",
+        "version": 1
+    },
+    "ctime": 1461079844,
+    "expire_in": 157680000,
+    "prev": "ab1d000752519b987c43d4b40c089fecffc8483b35638258f233e8769fe00cdf",
+    "seqno": 25,
+    "tag": "signature"
+}
+
+which yields the signature:
+
+-----BEGIN PGP MESSAGE-----
+Version: Keybase OpenPGP v2.0.53
+Comment: https://keybase.io/crypto
+
+yMIrAnicrVJbSBRRGN4tt1KwsiQqiWgIfDE5czkzZxYJgrSbVg/dS5c5M+fsTrvO
+7O6Mm7ZYEFkP1QZdwIy0iErDbmZQWZEVEfiQRWBUZEhQWhCUD5KknZF667Hzcjj/
+/33f+f6P/0nuZF+Of3qmP34tPQj9Pd1NNb7Nc9YtTnPYNuq4YJqLkomLxAziuKGo
+aXBBDvCAh4jHiGKDlwwJypgSXRB5QhHUKFJVikUACORFHSMZ60hRKEUiQrIABCoq
+ikyBxhVx1LTCJBlPmpbLZCEBEhUoIEDjicpDARpYBlDAxDAMSgUIJcDUICNGbMdj
+MHNYc0ixabMae4Qm7P0D/59910zIMSLgJRVCZlcTZVGiwFAFpBOJCEjkVQ/okKSl
+VROGjoluRItx9UUcq6VMnXixenP86TvVmhNxIyxlTY8W28kwo8eTtmvrdoy1I64b
+D3psty7uwXcRHPojFMKmZbAkGSFFko5pW1yQZ0jdNT1lXpJ5oKhIkoo4Uhs3kyRk
+egioyAiw431DUkxSw7zB3goLnlexihRdEg0JS0AHSGVBUaojCYlYhLKIBIioIIoE
+KTLrAaAblPNGS1g2FxQg86mFvanMsKW5NUnC1T96uCPL58/xTQlM8lbMl5M98+/i
+4bJpvsPXW5rTm+4tbZxiCkOX7lSV4q/z7xyrKO/u2GvdbGvdl+9/mZ8qOHGuIbM8
+72Q27Rvd3/6ibdZ4WQKceT/7VPnB9lfT3uBox/DKsuHx7kHxk3N367PtJSX40HDi
+4q/heQeaonb8bWJTz4PEg97cM631TYsbx+T7BT+PHHhdu3tPpdZ7fsmVhrFCl1tT
+XgkW9mSmrqm6vW3F6v61T7sCI4+zCtamD13IW7FR4n99u1z/vStrPXfazq+I/Oxd
+YG1pLT3Ykjt0wV94tG/RwPM9H99tCLT8aPgysMq/s9lqlDpHK8Y7V35+dbY0fLWt
+q7lh7qBx/MbIkY0fZqybuWzRrcd9mYDz7jfRc0OY
+=cLRF
+-----END PGP MESSAGE-----
+
+And finally, I am proving ownership of this host by posting or
+appending to this document.
+
+View my publicly-auditable identity here: https://keybase.io/l3thal
+
+==================================================================
+
