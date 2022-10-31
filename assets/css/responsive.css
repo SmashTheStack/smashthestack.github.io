@@ -1,0 +1,36 @@
+@media only screen and (max-width: 992px){
+	 html{font-size: 55.5%;}
+	 .menu-links{
+	 	/*padding: 2rem;*/
+	 	margin-top:2rem;
+	 }
+	 .navbar-toggler:focus{
+	 	box-shadow: none;
+	 }
+	}
+
+@media only screen and (max-width: 768px){
+	 html{font-size: 45.5%;}
+	 .landing_page_logo{
+	 	max-width: 30rem;
+	 }
+	 .balo{
+	 	max-width: 20rem;
+	 }
+	 .px_2{
+	 	padding:0rem 2rem;
+	 }
+	 .hero_contents{
+	 	padding:4rem 0rem;
+	 }
+	 .wargame_table table{
+	 	width:100%;
+	 	margin:0 auto;
+	 }
+	 @media only screen and (max-width:575px){
+ .wargame_table table{
+	 	width:60rem;
+	 	margin:0 auto;
+	 }
+	 }
+	}
